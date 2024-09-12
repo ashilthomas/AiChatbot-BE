@@ -107,6 +107,6 @@
    
                         /* Skip type checking all .d.ts files. */
   },
-  "include": ["src/app.ts"] ,
+ "include": ["src/**/*.ts"],
   "exclude": ["node_modules"]
 }
