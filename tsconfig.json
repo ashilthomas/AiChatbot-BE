@@ -110,3 +110,4 @@
  "include": ["src/**/*.ts"],
   "exclude": ["node_modules"]
 }
+// "dev": "nodemon --exec ts-node src/app.ts",
