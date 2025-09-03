@@ -4,14 +4,19 @@ import Chat from '../Model/AichatHIstory/chatHistory';
 
 type ChatRequestBody = {
   message: string;
+  userId?: string | string
 
   
 };
 
 const readOpenAi = async (req: Request<{}, {}, ChatRequestBody>, res: Response) => {
   try {
+     const userId = req.userId;
+
+     
  
     const {message } = req.body;
+   
    
     
 
