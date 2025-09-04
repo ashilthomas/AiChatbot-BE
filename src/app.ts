@@ -3,6 +3,7 @@ import connectDb from "./Config/db";
 import dotenv from "dotenv"
 import apiChatRouter from "./Routes/aiChatRoute";
 import cors from "cors"
+import { clerkMiddleware } from '@clerk/express';
 dotenv.config()
 
 
@@ -16,6 +17,7 @@ app.use(
 );
 
 connectDb()
+app.use(clerkMiddleware());
 
 app.use("/api/v1/chat",apiChatRouter)
 

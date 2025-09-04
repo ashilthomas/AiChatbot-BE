@@ -9,17 +9,17 @@ const genAI = new GoogleGenerativeAI(process.env.GEMANIAI_API_KEY as string);
 const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
 interface AIModelResponse {
-  getResponse: (userMessage: string) => Promise<string>;
+  getResponse: (userMessage: string,userId:string) => Promise<string>;
 }
 
 
 const aiModel: AIModelResponse = {
-  async getResponse(userMessage: string): Promise<string> {
+  async getResponse(userMessage: string,userId:string): Promise<string> {
     try {
       const aiResponse = await getResponseFromGeminiAI(userMessage);
 
    
-      await saveChatHistory(userMessage, aiResponse);
+      await saveChatHistory(userMessage, aiResponse,userId);
 
       return aiResponse;
     } catch (error: any) {
@@ -39,9 +39,9 @@ async function getResponseFromGeminiAI(userMessage: string): Promise<string> {
   }
 }
 
-async function saveChatHistory(userMessage: string, aiResponse: string) {
+async function saveChatHistory(userMessage: string, aiResponse: string,userId:string) {
   try {
-    const chat = new Chat({ userMessage, aiResponse });
+    const chat = new Chat({ userMessage, aiResponse,userId });
     await chat.save();
   } catch (error) {
     console.error('Error saving chat history:', error);

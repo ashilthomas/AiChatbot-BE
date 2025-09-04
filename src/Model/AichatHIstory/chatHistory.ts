@@ -1,12 +1,19 @@
-import mongoose from "mongoose";
+import mongoose, { Document, Schema } from "mongoose";
 
-const ChatSchema = new mongoose.Schema({
-  userMessage: String,
-  aiResponse: String,
+export interface ChatDocument extends Document {
+  userMessage: string;
+  aiResponse: string;
+  timestamp: Date;
+  userId: string;
+}
+
+const ChatSchema = new Schema<ChatDocument>({
+  userMessage: { type: String, required: true },
+  aiResponse: { type: String, required: true },
   timestamp: { type: Date, default: Date.now },
-  userId:String
+  userId: { type: String, required: true }, // Clerk userId
 });
 
-const Chat = mongoose.model('Chat', ChatSchema);
+const Chat = mongoose.model<ChatDocument>("Chat", ChatSchema);
 
- export default Chat
+export default Chat;

@@ -5,7 +5,7 @@ import clerkAuth from "../middleware/clerkAuth"
 
 const apiChatRouter = express.Router()
 
-apiChatRouter.post('/apireq',clerkAuth, readOpenAi)
+apiChatRouter.post('/apireq',clerkAuth,readOpenAi)
 apiChatRouter.get('/history',getAllHistory)
 apiChatRouter.delete('/delete/:id',deleteChat)
 apiChatRouter.post('/createUser',deleteChat)

@@ -1,39 +1,32 @@
 import { Request, Response } from 'express';
 import aiModel from '../Config/chatAi';
 import Chat from '../Model/AichatHIstory/chatHistory';
-
 type ChatRequestBody = {
   message: string;
-  userId?: string | string
-
-  
+  userId?: string; // optional if you sometimes don’t send it
 };
 
 const readOpenAi = async (req: Request<{}, {}, ChatRequestBody>, res: Response) => {
-  try {
-     const userId = req.userId;
+  console.log("hitting api");
 
-     
- 
-    const {message } = req.body;
-   
-   
-    
+  try {
+    const { message, userId } = req.body; 
 
     if (!message) {
-      return res.status(400).json({ error: 'Message is required' });
+      return res.status(400).json({ error: "Message is required" });
     }
 
     // Use the aiModel to get a response
-    const response = await aiModel.getResponse(message);
+    const response = await aiModel.getResponse(message, userId || "");
 
     // Send the response back
     res.json({ response });
   } catch (error) {
-    console.error('Error processing request:', error);
-    res.status(500).json({ error: 'Internal Server Error' });
+    console.error("Error processing request:", error);
+    res.status(500).json({ error: "Internal Server Error" });
   }
 };
+
 
 const getAllHistory =async(req:Request,res:Response)=>{
   try {
