@@ -41,8 +41,14 @@ async function getResponseFromGeminiAI(userMessage: string): Promise<string> {
 
 async function saveChatHistory(userMessage: string, aiResponse: string,userId:string) {
   try {
-    const chat = new Chat({ userMessage, aiResponse,userId });
-    await chat.save();
+   const chat = new Chat({
+    userId,
+    type: "chat",
+    userMessage,
+    aiResponse,
+  });
+  chat.save();
+   
   } catch (error) {
     console.error('Error saving chat history:', error);
   }

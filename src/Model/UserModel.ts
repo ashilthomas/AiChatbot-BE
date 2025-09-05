@@ -14,6 +14,7 @@ const ChatSchema = new Schema<ChatDocument>({
   userId: { type: String, required: true }, // Clerk userId
 });
 
-const Chat = mongoose.model<ChatDocument>("Chat", ChatSchema);
+const Chat = (mongoose.models.Chat as mongoose.Model<ChatDocument>) || mongoose.model<ChatDocument>("Chat", ChatSchema);
+
 
 export default Chat;

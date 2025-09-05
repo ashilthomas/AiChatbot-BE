@@ -1,19 +1,22 @@
-import mongoose, { Document, Schema } from "mongoose";
+import mongoose, { Schema, Document } from "mongoose";
 
-export interface ChatDocument extends Document {
-  userMessage: string;
-  aiResponse: string;
-  timestamp: Date;
+export interface IChat extends Document {
   userId: string;
+  type: "chat" | "image";
+  userMessage: string;
+  aiResponse: string; // text OR image URL
+  createdAt: Date;
 }
 
-const ChatSchema = new Schema<ChatDocument>({
-  userMessage: { type: String, required: true },
-  aiResponse: { type: String, required: true },
-  timestamp: { type: Date, default: Date.now },
-  userId: { type: String, required: true }, // Clerk userId
-});
+const ChatSchema: Schema = new Schema(
+  {
+    userId: { type: String, required: true },
+  type: { type: String, enum: ["chat", "image"], required: true },
+    userMessage: { type: String, required: true },
+    aiResponse: { type: String, required: true },
+  },
+  { timestamps: true }
+);
 
-const Chat = mongoose.model<ChatDocument>("Chat", ChatSchema);
-
+const Chat = mongoose.model<IChat>("Chat", ChatSchema);
 export default Chat;

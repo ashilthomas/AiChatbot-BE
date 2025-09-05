@@ -7,10 +7,11 @@ type ChatRequestBody = {
 };
 
 const readOpenAi = async (req: Request<{}, {}, ChatRequestBody>, res: Response) => {
-  console.log("hitting api");
+  
 
   try {
-    const { message, userId } = req.body; 
+    const userId = req.userId; // Access the userId from the request object
+    const { message,  } = req.body; 
 
     if (!message) {
       return res.status(400).json({ error: "Message is required" });
@@ -20,7 +21,8 @@ const readOpenAi = async (req: Request<{}, {}, ChatRequestBody>, res: Response) 
     const response = await aiModel.getResponse(message, userId || "");
 
     // Send the response back
-    res.json({ response });
+res.json({ response: response, type: "chat" ,userMessage:message });
+
   } catch (error) {
     console.error("Error processing request:", error);
     res.status(500).json({ error: "Internal Server Error" });
@@ -29,8 +31,11 @@ const readOpenAi = async (req: Request<{}, {}, ChatRequestBody>, res: Response) 
 
 
 const getAllHistory =async(req:Request,res:Response)=>{
+  const userId = req.userId; // Access the userId from the request object
   try {
-    const history = await Chat.find({})
+    const history = await Chat.find({userId}).sort({ createdAt: -1 });
+    
+    
 
   if(!history|| history.length ==0){
     return res.json({
@@ -55,33 +60,78 @@ const getAllHistory =async(req:Request,res:Response)=>{
 }
 
 const deleteChat = async (req: Request, res: Response) => {
-  const { id } = req.params;
-  console.log(id);
-  
-if(!id|| id==undefined){
-  return
-}
-  
+  try {
+    const userId = req.userId; // should come from auth middleware
+    const { id } = req.params;
 
-  // Find chat by ID
-  const item = await Chat.findById(id); // No need to pass an object to `findById`
+    if (!id) {
+      return res.status(400).json({
+        success: false,
+        message: "Chat ID is required",
+      });
+    }
 
-  // If item does not exist, return an error response
-  if (!item) {
+    // Find chat that belongs to this user
+    const item = await Chat.findOne({ _id: id, userId });
+
+    if (!item) {
+      return res.status(404).json({
+        success: false,
+        message: "Chat not found or not authorized",
+      });
+    }
+
+    // Delete the chat
+    await Chat.deleteOne({ _id: id, userId });
+
     return res.json({
+      success: true,
+      message: "Chat successfully deleted",
+    });
+  } catch (error) {
+    console.error("Error deleting chat:", error);
+    return res.status(500).json({
       success: false,
-      message: "No chat found"
+      message: "Internal server error",
     });
   }
-
-  // Delete the item
-  await Chat.deleteOne({ _id: id }); // Use the correct ID to delete
-
-  // Send success response after deletion
-  return res.json({
-    success: true,
-    message: "Chat successfully deleted"
-  });
 };
 
-export { readOpenAi,getAllHistory,deleteChat};
+const singleChat = async (req: Request, res: Response) => {
+  console.log("hitting single chat api");
+  
+  try {
+    const userId = req.userId; // should come from auth middleware
+    const { id } = req.params;
+    if (!id) {
+      return res.status(400).json({
+        success: false,
+        message: "Chat ID is required",
+      });
+    } 
+    // Find chat that belongs to this user
+    const item = await Chat.findOne({ _id: id, userId });
+
+    if (!item) {
+      return res.status(404).json({
+        success: false,
+        message: "Chat not found or not authorized",
+      });
+    }
+    return res.json({
+      success: true,
+      item
+    })
+  } catch (error) {
+    console.error("Error fetching previous chat:", error);
+    return res.status(500).json({ 
+      success: false,
+      message: "Internal server error" 
+    });
+  }
+};
+
+
+
+
+export { readOpenAi,getAllHistory,deleteChat,singleChat};
