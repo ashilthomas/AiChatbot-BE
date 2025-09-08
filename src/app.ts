@@ -5,6 +5,7 @@ import apiChatRouter from "./Routes/aiChatRoute";
 import cors from "cors"
 import { clerkMiddleware } from '@clerk/express';
 import apiImageRouter from "./Routes/aiImageRoute";
+import userRouter from "./Routes/userRoute";
 dotenv.config()
 
 
@@ -22,6 +23,7 @@ app.use(clerkMiddleware());
 
 app.use("/api/v1/chat",apiChatRouter)
 app.use("/api/v1/image",apiImageRouter)
+app.use("/api/v1/user",userRouter)
 
 
 

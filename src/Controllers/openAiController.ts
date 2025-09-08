@@ -7,27 +7,54 @@ type ChatRequestBody = {
 };
 
 const readOpenAi = async (req: Request<{}, {}, ChatRequestBody>, res: Response) => {
-  
-
   try {
-    const userId = req.userId; // Access the userId from the request object
-    const { message,  } = req.body; 
+    const userId = req.userId; 
+    const { message } = req.body; 
 
     if (!message) {
       return res.status(400).json({ error: "Message is required" });
     }
 
-    // Use the aiModel to get a response
+    // Find user's chat document
+    // const userChat = await Chat.findOne({ userId });
+
+    // if (!userChat) {
+    //   return res.status(404).json({ error: "User not found" });
+    // }
+
+    // Check if user has credits left
+  
+
+    // Get AI response
     const response = await aiModel.getResponse(message, userId || "");
 
-    // Send the response back
-res.json({ response: response, type: "chat" ,userMessage:message });
+    // Save chat + decrement credit
+    // const updatedChat = await Chat.findOneAndUpdate(
+    //   { userId },
+    //   {
+    //     $set: {
+    //       type: "chat",
+    //       userMessage: message,
+    //       aiResponse: response,
+    //     },
+    //     $inc: { credit: -1 }, // decrement credit by 1
+    //   },
+    //   { new: true } // return updated document
+    // );
+
+    res.json({
+      response: response,
+      type: "chat",
+      userMessage: message,
+      
+    });
 
   } catch (error) {
     console.error("Error processing request:", error);
     res.status(500).json({ error: "Internal Server Error" });
   }
 };
+
 
 
 const getAllHistory =async(req:Request,res:Response)=>{
@@ -130,8 +157,29 @@ const singleChat = async (req: Request, res: Response) => {
     });
   }
 };
+const credits= async(req:Request,res:Response)=>{
+  console.log("hitting credits api");
+  
+  const userId = req.userId;
+
+  console.log("userId",userId);
+  
+  try {
+    const userChat = await Chat.findOne({ userId:userId });
+    console.log("userChat",userChat);
+    
+    if (!userChat) {
+      return res.status(404).json({ error: "User not found" });
+    } 
+    
+    res.json({ success: true, creditLeft: userChat.credit });
+  } catch (error) {
+    console.error("Error adding credits:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+}
 
 
 
 
-export { readOpenAi,getAllHistory,deleteChat,singleChat};
+export { readOpenAi,getAllHistory,deleteChat,singleChat,credits};

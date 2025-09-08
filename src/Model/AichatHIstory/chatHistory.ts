@@ -6,14 +6,16 @@ export interface IChat extends Document {
   userMessage: string;
   aiResponse: string; // text OR image URL
   createdAt: Date;
+  credit: number;
 }
 
 const ChatSchema: Schema = new Schema(
   {
     userId: { type: String, required: true },
-  type: { type: String, enum: ["chat", "image"], required: true },
+    type: { type: String, enum: ["chat", "image"], required: true },
     userMessage: { type: String, required: true },
     aiResponse: { type: String, required: true },
+    credit: { type: Number, default: 10 }, // Corrected: credit field moved inside the schema object
   },
   { timestamps: true }
 );

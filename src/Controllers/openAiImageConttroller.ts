@@ -22,7 +22,7 @@ try {
     // Use the aiModel to get a response
     const response = await generateImage(prompt,userId || "");
     // Send the response back
-res.json({ image: response, type: "image" });
+res.json({ image: response, type: "image",userMessage:prompt });
  
     
     
