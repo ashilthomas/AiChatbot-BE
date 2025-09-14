@@ -3,11 +3,15 @@ import { getAuth } from "@clerk/express";
 import { log } from "console";
 
 const clerkAuth = (req: Request, res: Response, next: NextFunction) => {
-    console.log("htting clerk middleware");
+ 
+  
+  
     
   try {
     const { userId } = getAuth(req);
-    console.log("Clerk userId:", userId);
+
+    
+   
 
     if (!userId) {
       return res.status(401).json({ error: "Unauthorized" });

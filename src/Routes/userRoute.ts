@@ -1,8 +1,8 @@
 import express from "express";
 const userRouter = express.Router();
-import { createUserIfNotExists } from "../Controllers/userController";
 import clerkAuth from "../middleware/clerkAuth";
+import { createUserIfNotExists } from "../Controllers/userController";
 
-userRouter.post("/createUser",clerkAuth, createUserIfNotExists);
+userRouter.post("/createUser",clerkAuth,createUserIfNotExists);
 
 export default userRouter;

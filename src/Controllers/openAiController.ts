@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import aiModel from '../Config/chatAi';
 import Chat from '../Model/AichatHIstory/chatHistory';
+import User from '../Model/AichatHIstory/userModel';
 type ChatRequestBody = {
   message: string;
   userId?: string; // optional if you sometimes don’t send it
@@ -14,33 +15,29 @@ const readOpenAi = async (req: Request<{}, {}, ChatRequestBody>, res: Response) 
     if (!message) {
       return res.status(400).json({ error: "Message is required" });
     }
+    const creditDoc = await User.findOne({ userId });
+    console.log("creditDoc",creditDoc);
+    
+    if (!creditDoc || creditDoc.credit <= 0) {
+      return res.json({
+        success:false, 
+         error: "Insufficient credit" });
+    }
 
-    // Find user's chat document
-    // const userChat = await Chat.findOne({ userId });
-
-    // if (!userChat) {
-    //   return res.status(404).json({ error: "User not found" });
-    // }
-
-    // Check if user has credits left
-  
-
-    // Get AI response
     const response = await aiModel.getResponse(message, userId || "");
 
-    // Save chat + decrement credit
-    // const updatedChat = await Chat.findOneAndUpdate(
-    //   { userId },
-    //   {
-    //     $set: {
-    //       type: "chat",
-    //       userMessage: message,
-    //       aiResponse: response,
-    //     },
-    //     $inc: { credit: -1 }, // decrement credit by 1
-    //   },
-    //   { new: true } // return updated document
-    // );
+
+  const updateDocument = {
+  $inc: { credit: -1 }, // decrement by 1
+};
+
+   
+  await User.findOneAndUpdate(
+  { userId: userId }, // filter
+  updateDocument,
+  { new: true }    // return updated doc if needed
+);
+
 
     res.json({
       response: response,
@@ -138,6 +135,7 @@ const singleChat = async (req: Request, res: Response) => {
     } 
     // Find chat that belongs to this user
     const item = await Chat.findOne({ _id: id, userId });
+console.log("item",item);
 
     if (!item) {
       return res.status(404).json({
@@ -157,29 +155,9 @@ const singleChat = async (req: Request, res: Response) => {
     });
   }
 };
-const credits= async(req:Request,res:Response)=>{
-  console.log("hitting credits api");
-  
-  const userId = req.userId;
-
-  console.log("userId",userId);
-  
-  try {
-    const userChat = await Chat.findOne({ userId:userId });
-    console.log("userChat",userChat);
-    
-    if (!userChat) {
-      return res.status(404).json({ error: "User not found" });
-    } 
-    
-    res.json({ success: true, creditLeft: userChat.credit });
-  } catch (error) {
-    console.error("Error adding credits:", error);
-    res.status(500).json({ error: "Internal Server Error" });
-  }
-}
 
 
 
 
-export { readOpenAi,getAllHistory,deleteChat,singleChat,credits};
+
+export { readOpenAi,getAllHistory,deleteChat,singleChat};
