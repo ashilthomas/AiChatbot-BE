@@ -25,8 +25,8 @@
   "dependencies": {
     "@clerk/express": "^1.7.26",
     "@google-ai/generativelanguage": "^2.6.0",
-    "@google/genai": "^1.17.0",
-    "@google/generative-ai": "^0.17.1",
+    "@google/genai": "^1.28.0",
+    "@google/generative-ai": "^0.24.1",
     "@huggingface/inference": "^2.8.0",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",

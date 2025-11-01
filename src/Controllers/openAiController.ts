@@ -33,7 +33,7 @@ const readOpenAi = async (req: Request<{}, {}, ChatRequestBody>, res: Response) 
 
 
   const updateDocument = {
-  $inc: { credit: -1 }, // decrement by 1
+  $inc: { credit: -2 }, // decrement by 2 for chat
 };
 
    
