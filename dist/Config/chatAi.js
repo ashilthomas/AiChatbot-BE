@@ -19,11 +19,11 @@ dotenv_1.default.config();
 const genAI = new generative_ai_1.GoogleGenerativeAI(process.env.GEMANIAI_API_KEY);
 const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 const aiModel = {
-    getResponse(userMessage) {
+    getResponse(userMessage, userId) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const aiResponse = yield getResponseFromGeminiAI(userMessage);
-                yield saveChatHistory(userMessage, aiResponse);
+                yield saveChatHistory(userMessage, aiResponse, userId);
                 return aiResponse;
             }
             catch (error) {
@@ -45,11 +45,16 @@ function getResponseFromGeminiAI(userMessage) {
         }
     });
 }
-function saveChatHistory(userMessage, aiResponse) {
+function saveChatHistory(userMessage, aiResponse, userId) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const chat = new chatHistory_1.default({ userMessage, aiResponse });
-            yield chat.save();
+            const chat = new chatHistory_1.default({
+                userId,
+                type: "chat",
+                userMessage,
+                aiResponse,
+            });
+            chat.save();
         }
         catch (error) {
             console.error('Error saving chat history:', error);

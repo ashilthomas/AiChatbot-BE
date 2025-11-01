@@ -25,11 +25,10 @@ var __importStar = (this && this.__importStar) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = __importStar(require("mongoose"));
 const ChatSchema = new mongoose_1.Schema({
-    userId: { type: String, required: true },
-    type: { type: String, enum: ["chat", "image"], required: true },
     userMessage: { type: String, required: true },
     aiResponse: { type: String, required: true },
-    // Corrected: credit field moved inside the schema object
-}, { timestamps: true });
-const Chat = mongoose_1.default.model("Chat", ChatSchema);
+    timestamp: { type: Date, default: Date.now },
+    userId: { type: String, required: true }, // Clerk userId
+});
+const Chat = mongoose_1.default.models.Chat || mongoose_1.default.model("Chat", ChatSchema);
 exports.default = Chat;

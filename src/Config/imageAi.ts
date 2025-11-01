@@ -1,4 +1,4 @@
-import Chat from "../Model/UserModel";
+import Chat from "../Model/AichatHIstory/chatHistory";
 
 export async function generateImage(userMessage: string, userId: string): Promise<string> {
   const aiResponse = `https://image.pollinations.ai/prompt/${encodeURIComponent(userMessage)}`;
